@@ -23,14 +23,6 @@
     }
     @keyframes fadeUp {to {opacity:1; transform:translateY(0)}}
 
-    /* Ripple reusable */
-    .ripple {
-      position:absolute; border-radius:50%; background:rgba(167,139,250,.6);
-      transform:scale(0); animation:ripple 0.6s ease-out;
-      pointer-events:none;
-    }
-    @keyframes ripple {to {transform:scale(2.5); opacity:0;}}
-
     /* Idle floating animation */
     @keyframes idleFloat {
       0%, 100% { transform: translateY(0); }
@@ -46,6 +38,7 @@
       box-shadow:0 0 20px rgba(34,211,238,.5);
       position:relative; overflow:hidden; cursor:pointer;
       animation: idleFloat 7s ease-in-out infinite;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
     .avatar:hover {
       transform:scale(1.15) rotate(5deg);
@@ -56,19 +49,23 @@
     .who {flex:1; min-width:0;}
     .name {
       font-size:clamp(1.4rem, 5vw, 1.8rem); font-weight:900; margin:0;
-      background:linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6);
+      background:linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6, #22d3ee);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-size:200% auto; opacity:0; transform:translateY(20px);
-      animation:floatIn 1.4s ease forwards .4s, glowText 4s ease-in-out infinite alternate;
+      background-size:300% auto;
+      animation: shine 6s linear infinite, glowText 4s ease-in-out infinite alternate;
+      display:inline-block; cursor:pointer; position:relative;
+      transition: transform 0.4s ease, text-shadow 0.4s ease;
     }
-    .meta {
-      color:#cbd5e1; font-size:clamp(0.9rem, 3.5vw, 1rem);
-      text-shadow:0 0 8px rgba(34,211,238,.4);
-      opacity:0; transform:translateY(20px);
-      animation:floatIn 1.4s ease forwards .6s;
+    @keyframes shine {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
     @keyframes floatIn {to {opacity:1; transform:translateY(0);}}
     @keyframes glowText {from{text-shadow:0 0 6px #22d3ee;} to{text-shadow:0 0 20px #a78bfa;}}
+    .name:hover, .name.active {
+      transform: scale(1.15) rotate(-2deg);
+      text-shadow: 0 0 15px #22d3ee, 0 0 25px #a78bfa, 0 0 35px #f472b6;
+    }
 
     /* Tiles */
     .grid {
@@ -83,7 +80,7 @@
       transition:transform .5s cubic-bezier(.25,.8,.25,1), box-shadow .5s;
       opacity:0; transform:translateY(25px);
       animation:floatIn 1s ease forwards, idleFloat 6s ease-in-out infinite;
-      overflow:hidden; cursor:pointer;
+      cursor:pointer;
     }
     .tile:nth-child(1){animation-delay:.8s, 0s;}
     .tile:nth-child(2){animation-delay:1s, 2s;}
@@ -96,12 +93,11 @@
 
     /* Bio */
     .bio {
-      position:relative;
       background:#0b1023; border:1px solid rgba(148,163,184,.18);
       border-radius:14px; padding:14px; margin-bottom:18px;
       opacity:0; transform:translateY(20px);
       animation:floatIn 1s ease forwards 1.2s, idleFloat 7s ease-in-out infinite;
-      overflow:hidden; cursor:pointer;
+      cursor:pointer;
       transition:transform .4s ease, box-shadow .4s ease;
     }
     .bio:hover {transform:scale(1.03); box-shadow:0 0 25px rgba(34,211,238,.7);}
@@ -109,15 +105,17 @@
     .bio div {text-shadow:0 0 10px rgba(167,139,250,.6);}
 
     /* Links */
+    .links {
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
     .links a {
-      position:relative;
-      color:#22d3ee; text-decoration:none; margin-right:12px;
+      display:inline-block;
+      padding:4px 6px;
+      color:#22d3ee; text-decoration:none;
       font-size:clamp(.9rem, 3.5vw, 1rem);
       opacity:0; transform:translateY(20px);
       animation:floatIn 1s ease forwards, idleFloat 8s ease-in-out infinite;
       transition:all .4s ease;
-      overflow:hidden; cursor:pointer;
-      display:inline-block;
     }
     .links a:nth-child(1){animation-delay:1.4s, 0s;}
     .links a:nth-child(2){animation-delay:1.6s, 2s;}
@@ -167,7 +165,6 @@
       width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:35px solid rgba(34,211,238,.25);
     }
 
-    /* Mobile */
     @media (max-width:480px){.links a{display:block; margin-bottom:6px;}}
   </style>
 </head>
@@ -184,27 +181,27 @@
 
   <section class="card" id="card">
     <div class="id">
-      <div class="avatar ripple-target tilt" id="avatar"></div>
+      <div class="avatar tilt" id="avatar"></div>
       <div class="who">
-        <h3 class="name">Naz Rodriguez</h3>
+        <h3 class="name" id="name">Naz Rodriguez</h3>
         <div class="meta">Birthday: May 29, 2007 • Age: 18</div>
       </div>
     </div>
 
     <div class="grid">
-      <div class="tile ripple-target tilt"><h4>Phone</h4><div class="v">(516) 870-2747</div></div>
-      <div class="tile ripple-target tilt"><h4>Email</h4><div class="v">Nazrodriguez4@gmail.com</div></div>
+      <div class="tile tilt"><h4>Phone</h4><div class="v">(516) 870-2747</div></div>
+      <div class="tile tilt"><h4>Email</h4><div class="v">Nazrodriguez4@gmail.com</div></div>
     </div>
 
-    <div class="bio ripple-target tilt">
+    <div class="bio tilt">
       <h4>About</h4>
       <div>Yerrrrr its Naz :)</div>
     </div>
 
     <div class="links">
-      <a href="https://x.com/Itsnzzzz" target="_blank" class="ripple-target tilt">X/Twitter</a>
-      <a href="https://www.instagram.com/itsnzzzz#" target="_blank" class="ripple-target tilt">Instagram</a>
-      <a href="https://www.tiktok.com/@itsnzzy" target="_blank" class="ripple-target tilt">TikTok</a>
+      <a href="https://x.com/Itsnzzzz" target="_blank">X/Twitter</a>
+      <a href="https://www.instagram.com/itsnzzzz#" target="_blank">Instagram</a>
+      <a href="https://www.tiktok.com/@itsnzzy" target="_blank">TikTok</a>
     </div>
   </section>
 
@@ -218,31 +215,22 @@
     const audio = document.getElementById('audio');
     const icon = document.getElementById('music-icon');
     const iconBox = document.getElementById('music-control');
+    const nameEl = document.getElementById('name');
 
     // Toggle music
-    iconBox.addEventListener('click', e => {
-      addRipple(e, iconBox);
+    iconBox.addEventListener('click', () => {
       audio.paused ? audio.play() : audio.pause();
     });
     audio.addEventListener('play', () => {icon.textContent = '🔊'; iconBox.classList.add('playing');});
     audio.addEventListener('pause', () => {icon.textContent = '🔇'; iconBox.classList.remove('playing');});
 
-    // Ripple effect
-    function addRipple(e, target) {
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      const rect = target.getBoundingClientRect();
-      ripple.style.left = (e.clientX - rect.left - 50)+'px';
-      ripple.style.top = (e.clientY - rect.top - 50)+'px';
-      ripple.style.width = ripple.style.height = '100px';
-      target.appendChild(ripple);
-      setTimeout(()=>ripple.remove(), 600);
-    }
-    document.querySelectorAll('.ripple-target').forEach(el=>{
-      el.addEventListener('click', e=> addRipple(e, el));
+    // Tap-to-animate name (mobile)
+    nameEl.addEventListener('touchstart', () => {
+      nameEl.classList.add('active');
+      setTimeout(() => nameEl.classList.remove('active'), 400);
     });
 
-    // Tilt effect (desktop)
+    // Tilt effect (desktop only)
     document.querySelectorAll('.tilt').forEach(el => {
       el.addEventListener('mousemove', e => {
         const rect = el.getBoundingClientRect();
@@ -259,7 +247,7 @@
       });
     });
 
-    // Background shapes parallax (mouse + gyroscope)
+    // Background shapes parallax
     const shapes = document.querySelectorAll('.shape');
     document.addEventListener('mousemove', e => {
       const x = (e.clientX / window.innerWidth - 0.5) * 40;
@@ -272,8 +260,8 @@
 
     // Mobile gyroscope support
     window.addEventListener('deviceorientation', e => {
-      const x = e.gamma; // left-right
-      const y = e.beta;  // front-back
+      const x = e.gamma; 
+      const y = e.beta;  
       shapes.forEach((shape, i) => {
         const speed = (i+1) * 3;
         shape.style.transform = `translate(${x/speed}px, ${y/speed}px)`;
