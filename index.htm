@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>My Info — One-Page Profile</title>
+  <style>
+    body {
+      margin:0; background:#0f172a; color:#e5e7eb;
+      font: clamp(14px, 2.5vw, 16px)/1.5 system-ui, sans-serif;
+      display:flex; justify-content:center; align-items:center;
+      min-height:100vh; overflow-x:hidden; padding:10px;
+      flex-direction:column;
+    }
+
+    .card {
+      width:100%; max-width:600px; background:#111827; border-radius:18px;
+      padding:clamp(16px, 4vw, 24px);
+      box-shadow:0 20px 50px rgba(0,0,0,.55);
+      opacity:0; transform:translateY(60px);
+      animation:fadeUp 1.2s ease forwards;
+      will-change: transform;
+    }
+    @keyframes fadeUp {to {opacity:1; transform:translateY(0)}}
+
+    /* Ripple reusable */
+    .ripple {
+      position:absolute; border-radius:50%; background:rgba(167,139,250,.6);
+      transform:scale(0); animation:ripple 0.6s ease-out;
+      pointer-events:none;
+    }
+    @keyframes ripple {to {transform:scale(2.5); opacity:0;}}
+
+    /* Idle floating animation */
+    @keyframes idleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Profile */
+    .id {display:flex; gap:16px; align-items:center; margin-bottom:20px; flex-wrap:wrap;}
+    .avatar {
+      width:clamp(80px, 22vw, 110px); height:clamp(80px, 22vw, 110px);
+      border-radius:18px; border:3px solid rgba(255,255,255,.2);
+      background:url('https://i.postimg.cc/Rh0DPfps/itsnaz.jpg') center/cover no-repeat;
+      box-shadow:0 0 20px rgba(34,211,238,.5);
+      position:relative; overflow:hidden; cursor:pointer;
+      animation: idleFloat 7s ease-in-out infinite;
+    }
+    .avatar:hover {
+      transform:scale(1.15) rotate(5deg);
+      box-shadow:0 0 35px rgba(167,139,250,.9), 0 0 60px rgba(34,211,238,.8);
+    }
+
+    /* Name */
+    .who {flex:1; min-width:0;}
+    .name {
+      font-size:clamp(1.4rem, 5vw, 1.8rem); font-weight:900; margin:0;
+      background:linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-size:200% auto; opacity:0; transform:translateY(20px);
+      animation:floatIn 1.4s ease forwards .4s, glowText 4s ease-in-out infinite alternate;
+    }
+    .meta {
+      color:#cbd5e1; font-size:clamp(0.9rem, 3.5vw, 1rem);
+      text-shadow:0 0 8px rgba(34,211,238,.4);
+      opacity:0; transform:translateY(20px);
+      animation:floatIn 1.4s ease forwards .6s;
+    }
+    @keyframes floatIn {to {opacity:1; transform:translateY(0);}}
+    @keyframes glowText {from{text-shadow:0 0 6px #22d3ee;} to{text-shadow:0 0 20px #a78bfa;}}
+
+    /* Tiles */
+    .grid {
+      display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+      margin-bottom:18px;
+    }
+    .tile {
+      position:relative;
+      background:#0b1023; border:1px solid rgba(148,163,184,.18);
+      border-radius:14px; padding:14px;
+      box-shadow:inset 0 0 10px rgba(34,211,238,.25);
+      transition:transform .5s cubic-bezier(.25,.8,.25,1), box-shadow .5s;
+      opacity:0; transform:translateY(25px);
+      animation:floatIn 1s ease forwards, idleFloat 6s ease-in-out infinite;
+      overflow:hidden; cursor:pointer;
+    }
+    .tile:nth-child(1){animation-delay:.8s, 0s;}
+    .tile:nth-child(2){animation-delay:1s, 2s;}
+    .tile:hover {
+      transform:translateY(-6px) scale(1.08);
+      box-shadow:0 0 25px rgba(167,139,250,.8), inset 0 0 12px rgba(34,211,238,.4);
+    }
+    .tile h4 {margin:0 0 6px; font-size:clamp(.85rem, 3vw, 1rem); color:#a78bfa;}
+    .tile .v {color:#fff; font-weight:600; text-shadow:0 0 10px rgba(34,211,238,.6);}
+
+    /* Bio */
+    .bio {
+      position:relative;
+      background:#0b1023; border:1px solid rgba(148,163,184,.18);
+      border-radius:14px; padding:14px; margin-bottom:18px;
+      opacity:0; transform:translateY(20px);
+      animation:floatIn 1s ease forwards 1.2s, idleFloat 7s ease-in-out infinite;
+      overflow:hidden; cursor:pointer;
+      transition:transform .4s ease, box-shadow .4s ease;
+    }
+    .bio:hover {transform:scale(1.03); box-shadow:0 0 25px rgba(34,211,238,.7);}
+    .bio h4 {margin:0 0 6px; font-size:clamp(.9rem, 3vw, 1rem); color:#22d3ee; text-shadow:0 0 12px rgba(34,211,238,.6);}
+    .bio div {text-shadow:0 0 10px rgba(167,139,250,.6);}
+
+    /* Links */
+    .links a {
+      position:relative;
+      color:#22d3ee; text-decoration:none; margin-right:12px;
+      font-size:clamp(.9rem, 3.5vw, 1rem);
+      opacity:0; transform:translateY(20px);
+      animation:floatIn 1s ease forwards, idleFloat 8s ease-in-out infinite;
+      transition:all .4s ease;
+      overflow:hidden; cursor:pointer;
+      display:inline-block;
+    }
+    .links a:nth-child(1){animation-delay:1.4s, 0s;}
+    .links a:nth-child(2){animation-delay:1.6s, 2s;}
+    .links a:nth-child(3){animation-delay:1.8s, 4s;}
+    .links a::after {
+      content:""; position:absolute; left:0; bottom:-3px; width:0%; height:2px;
+      background:#a78bfa; transition:.4s;
+    }
+    .links a:hover {
+      color:#f472b6; text-shadow:0 0 15px #f472b6;
+      transform:translateY(-2px) scale(1.07);
+    }
+    .links a:hover::after {width:100%;}
+
+    /* Music Control */
+    #music-control {
+      position:fixed; bottom:60px; right:20px; cursor:pointer; font-size:2rem;
+      background:#0b1023; border:1px solid rgba(148,163,184,.3);
+      padding:10px; border-radius:12px;
+      box-shadow:0 0 12px rgba(34,211,238,.5);
+      transition:all .5s cubic-bezier(.25,.8,.25,1);
+    }
+    #music-control:hover {
+      transform:scale(1.15) rotate(8deg);
+      box-shadow:0 0 25px rgba(167,139,250,.9);
+    }
+    .playing {
+      animation:musicPulse 1.2s infinite;
+      box-shadow:0 0 20px rgba(34,211,238,.8), 0 0 40px rgba(167,139,250,.7);
+    }
+    .playing:hover {
+      transform:scale(1.25) rotate(-8deg);
+      box-shadow:0 0 30px rgba(167,139,250,1), 0 0 60px rgba(34,211,238,.9);
+    }
+    @keyframes musicPulse {0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);}}
+
+    /* Footer */
+    footer {margin-top:20px; font-size:clamp(.9rem, 3.5vw, 1rem); color:#22d3ee; animation:footerGlow 3s ease-in-out infinite alternate;}
+    @keyframes footerGlow {from{text-shadow:0 0 8px #22d3ee;} to{text-shadow:0 0 22px #a78bfa;}}
+
+    /* Background shapes */
+    .bg-anim {position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; overflow:hidden;}
+    .shape {position:absolute; border-radius:50%; opacity:.4; filter:blur(2px);}
+    .shape.circle {background:rgba(34,211,238,.2);}
+    .shape.square {background:rgba(167,139,250,.2); border-radius:8px;}
+    .shape.triangle {
+      width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:35px solid rgba(34,211,238,.25);
+    }
+
+    /* Mobile */
+    @media (max-width:480px){.links a{display:block; margin-bottom:6px;}}
+  </style>
+</head>
+<body>
+  <div class="bg-anim">
+    <div class="shape circle"></div>
+    <div class="shape square"></div>
+    <div class="shape circle"></div>
+    <div class="shape square"></div>
+    <div class="shape triangle"></div>
+    <div class="shape circle"></div>
+    <div class="shape square"></div>
+  </div>
+
+  <section class="card" id="card">
+    <div class="id">
+      <div class="avatar ripple-target tilt" id="avatar"></div>
+      <div class="who">
+        <h3 class="name">Naz Rodriguez</h3>
+        <div class="meta">Birthday: May 29, 2007 • Age: 18</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="tile ripple-target tilt"><h4>Phone</h4><div class="v">(516) 870-2747</div></div>
+      <div class="tile ripple-target tilt"><h4>Email</h4><div class="v">Nazrodriguez4@gmail.com</div></div>
+    </div>
+
+    <div class="bio ripple-target tilt">
+      <h4>About</h4>
+      <div>Yerrrrr its Naz :)</div>
+    </div>
+
+    <div class="links">
+      <a href="https://x.com/Itsnzzzz" target="_blank" class="ripple-target tilt">X/Twitter</a>
+      <a href="https://www.instagram.com/itsnzzzz#" target="_blank" class="ripple-target tilt">Instagram</a>
+      <a href="https://www.tiktok.com/@itsnzzy" target="_blank" class="ripple-target tilt">TikTok</a>
+    </div>
+  </section>
+
+  <audio id="audio" autoplay>
+    <source src="https://audio.jukehost.co.uk/9wVAZsk3qcMMo2mlqFDtQ5PoBvoWiSkh" type="audio/mpeg">
+  </audio>
+  <div id="music-control"><span id="music-icon">🔊</span></div>
+  <footer>@Naz</footer>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const icon = document.getElementById('music-icon');
+    const iconBox = document.getElementById('music-control');
+
+    // Toggle music
+    iconBox.addEventListener('click', e => {
+      addRipple(e, iconBox);
+      audio.paused ? audio.play() : audio.pause();
+    });
+    audio.addEventListener('play', () => {icon.textContent = '🔊'; iconBox.classList.add('playing');});
+    audio.addEventListener('pause', () => {icon.textContent = '🔇'; iconBox.classList.remove('playing');});
+
+    // Ripple effect
+    function addRipple(e, target) {
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      const rect = target.getBoundingClientRect();
+      ripple.style.left = (e.clientX - rect.left - 50)+'px';
+      ripple.style.top = (e.clientY - rect.top - 50)+'px';
+      ripple.style.width = ripple.style.height = '100px';
+      target.appendChild(ripple);
+      setTimeout(()=>ripple.remove(), 600);
+    }
+    document.querySelectorAll('.ripple-target').forEach(el=>{
+      el.addEventListener('click', e=> addRipple(e, el));
+    });
+
+    // Tilt effect (desktop)
+    document.querySelectorAll('.tilt').forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width/2;
+        const centerY = rect.height/2;
+        const rotateX = ((y - centerY) / centerY) * 8; 
+        const rotateY = ((x - centerX) / centerX) * -8;
+        el.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = "rotateX(0) rotateY(0) scale(1)";
+      });
+    });
+
+    // Background shapes parallax (mouse + gyroscope)
+    const shapes = document.querySelectorAll('.shape');
+    document.addEventListener('mousemove', e => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 40;
+      const y = (e.clientY / window.innerHeight - 0.5) * 40;
+      shapes.forEach((shape, i) => {
+        const speed = (i+1) * 3;
+        shape.style.transform = `translate(${x/speed}px, ${y/speed}px)`;
+      });
+    });
+
+    // Mobile gyroscope support
+    window.addEventListener('deviceorientation', e => {
+      const x = e.gamma; // left-right
+      const y = e.beta;  // front-back
+      shapes.forEach((shape, i) => {
+        const speed = (i+1) * 3;
+        shape.style.transform = `translate(${x/speed}px, ${y/speed}px)`;
+      });
+    });
+
+    // Autoplay attempt
+    window.addEventListener('load', () => {
+      audio.play().catch(()=>{icon.textContent='🔇';});
+    });
+  </script>
+</body>
+</html>
